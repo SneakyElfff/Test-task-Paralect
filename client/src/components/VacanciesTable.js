@@ -3,15 +3,17 @@ import axios from 'axios';
 
 const VacanciesTable = () => {
     const [vacancies, setVacancies] = useState([]);
+    const [selectedVacancy, setSelectedVacancy] = useState(null);
     const [showForm, setShowForm] = useState(false);
-    const [newVacancy, setNewVacancy] = useState({
+    const [isEditing, setIsEditing] = useState(false);
+
+    const initialVacancyState = {
         company: '',
         position: '',
         salary_range: '',
         notes: '',
         application_status: '',
-    });
-
+    };
 
     useEffect(() => {
         const fetchVacancies = async () => {
@@ -26,44 +28,77 @@ const VacanciesTable = () => {
         fetchVacancies();
     }, []);
 
+    const handleRowClick = (vacancy) => {
+        if (selectedVacancy && selectedVacancy._id === vacancy._id) {
+            setSelectedVacancy(null);
+        } else {
+            setSelectedVacancy(vacancy);
+        }
+    };
+
+    const handleEditing = () => {
+        if (selectedVacancy) {
+            setShowForm(true);
+            setIsEditing(true);
+        } else {
+            alert('Please select a row to edit.');
+        }
+    };
+
+    const handleAdding = () => {
+        setSelectedVacancy(initialVacancyState);
+        setShowForm(true);
+
+        setIsEditing(false);
+    };
+
     const handleChanges = (e) => {
         const { name, value } = e.target;
-        setNewVacancy({ ...newVacancy, [name]: value });
+        setSelectedVacancy({ ...selectedVacancy, [name]: value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3000/jobOpenings', newVacancy);
-            setVacancies([...vacancies, response.data]);
+            if (isEditing) {
+                await axios.put(`http://localhost:3000/jobOpenings/${selectedVacancy._id}`, selectedVacancy);
+                setVacancies((prev) =>
+                    prev.map((vacancy) =>
+                        vacancy._id === selectedVacancy._id ? selectedVacancy : vacancy
+                    )
+                );
+            } else {
+                const response = await axios.post('http://localhost:3000/jobOpenings', selectedVacancy);
+                setVacancies([...vacancies, response.data]);
+            }
             setShowForm(false);
-            setNewVacancy({
-                company: '',
-                position: '',
-                salary_range: '',
-                notes: '',
-                application_status: '',
-            });
         } catch (error) {
-            console.error('Failed to add a vacancy:', error);
+            console.error(isEditing ? 'Failed to update the vacancy:' : 'Failed to add a vacancy:', error);
         }
     };
 
     return (
         <div>
-            <button className="add-button" onClick={() => setShowForm(true)}>+</button>
+            <button className="add-button" onClick={handleAdding}>
+                +
+            </button>
+            <button className="edit-button" onClick={handleEditing}>
+                Edit Selected
+            </button>
 
             {showForm && (
                 <div className="modal">
                     <div className="modal-content">
-                        <span className="close" onClick={() => setShowForm(false)}>&times;</span>
+                        <span className="close" onClick={() => setShowForm(false)}>
+                            &times;
+                        </span>
                         <form onSubmit={handleSubmit}>
                             <div>
                                 <label>Company:</label>
                                 <input
                                     type="text"
                                     name="company"
-                                    value={newVacancy.company}
+                                    value={selectedVacancy.company}
                                     onChange={handleChanges}
                                     required
                                 />
@@ -73,7 +108,7 @@ const VacanciesTable = () => {
                                 <input
                                     type="text"
                                     name="position"
-                                    value={newVacancy.position}
+                                    value={selectedVacancy.position}
                                     onChange={handleChanges}
                                     required
                                 />
@@ -83,7 +118,7 @@ const VacanciesTable = () => {
                                 <input
                                     type="text"
                                     name="salary_range"
-                                    value={newVacancy.salary_range}
+                                    value={selectedVacancy.salary_range}
                                     onChange={handleChanges}
                                 />
                             </div>
@@ -92,7 +127,7 @@ const VacanciesTable = () => {
                                 <input
                                     type="text"
                                     name="notes"
-                                    value={newVacancy.notes}
+                                    value={selectedVacancy.notes}
                                     onChange={handleChanges}
                                 />
                             </div>
@@ -101,12 +136,14 @@ const VacanciesTable = () => {
                                 <input
                                     type="text"
                                     name="application_status"
-                                    value={newVacancy.application_status}
+                                    value={selectedVacancy.application_status}
                                     onChange={handleChanges}
                                     required
                                 />
                             </div>
-                            <button type="submit">Add vacancy</button>
+                            <button type="submit">
+                                {isEditing ? 'Save Changes' : 'Add Vacancy'}
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -124,7 +161,14 @@ const VacanciesTable = () => {
                 </thead>
                 <tbody>
                 {vacancies.map((vacancy) => (
-                    <tr key={vacancy._id}>
+                    <tr
+                        key={vacancy._id}
+                        onClick={() => handleRowClick(vacancy)}
+                        style={{
+                            backgroundColor: selectedVacancy?._id === vacancy._id ? '#f0f8ff' : '',
+                            cursor: 'pointer',
+                        }}
+                    >
                         <td>{vacancy.company}</td>
                         <td>{vacancy.position}</td>
                         <td>{vacancy.salary_range}</td>
