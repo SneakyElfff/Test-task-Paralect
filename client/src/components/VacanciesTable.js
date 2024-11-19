@@ -6,6 +6,7 @@ const VacanciesTable = () => {
     const [selectedVacancy, setSelectedVacancy] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [errorPopup, setErrorPopup] = useState({ visible: false, message: '' });
 
     const initialVacancyState = {
         company: '',
@@ -22,6 +23,9 @@ const VacanciesTable = () => {
                 setVacancies(response.data);
             } catch (error) {
                 console.error('Failed to fetch vacancies:', error);
+
+                setErrorPopup({ visible: true, message: 'Failed to fetch vacancies. Please try again later.' });
+
             }
         };
 
@@ -52,6 +56,23 @@ const VacanciesTable = () => {
         setIsEditing(false);
     };
 
+    const handleDeleting = async () => {
+        if (selectedVacancy) {
+            if (window.confirm('Are you sure you want to delete this vacancy?')) {
+                try {
+                    await axios.delete(`http://localhost:3000/jobOpenings/${selectedVacancy._id}`);
+                    setVacancies((prev) => prev.filter((vacancy) => vacancy._id !== selectedVacancy._id));
+                    setSelectedVacancy(null);
+                } catch (error) {
+                    console.error('Failed to delete the vacancy:', error);
+                    setErrorPopup({ visible: true, message: 'Failed to delete the vacancy. Please try again.' });
+                }
+            }
+        } else {
+            alert('Please select a row to delete.');
+        }
+    };
+
     const handleChanges = (e) => {
         const { name, value } = e.target;
         setSelectedVacancy({ ...selectedVacancy, [name]: value });
@@ -74,6 +95,7 @@ const VacanciesTable = () => {
             setShowForm(false);
         } catch (error) {
             console.error(isEditing ? 'Failed to update the vacancy:' : 'Failed to add a vacancy:', error);
+            setErrorPopup({ visible: true, message: isEditing ? 'Failed to update the vacancy. Please try again.' : 'Failed to add a vacancy. Please try again.' });
         }
     };
 
@@ -83,7 +105,10 @@ const VacanciesTable = () => {
                 +
             </button>
             <button className="edit-button" onClick={handleEditing}>
-                Edit Selected
+                Edit selected
+            </button>
+            <button className="delete-button" onClick={handleDeleting}>
+                Delete selected
             </button>
 
             {showForm && (
@@ -149,6 +174,14 @@ const VacanciesTable = () => {
                 </div>
             )}
 
+            {errorPopup.visible && (
+                <div className="popup">
+                    <div className="popup-content">
+                        <p>{errorPopup.message}</p>
+                        <button onClick={() => setErrorPopup({ visible: false, message: '' })}>OK</button>
+                    </div>
+                </div>
+            )}
             <table>
                 <thead>
                 <tr>
