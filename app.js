@@ -32,12 +32,14 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/jobOpenings', jobOpeningsRouter);
 
-// Обслуживание статики
-app.use(express.static(path.join(__dirname, 'client/build')));
+if (process.env.NODE_ENV === 'production') {
+  const express = require('express');
+  app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-});
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
