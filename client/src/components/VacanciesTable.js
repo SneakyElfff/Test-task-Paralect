@@ -198,7 +198,7 @@ const VacanciesTable = () => {
                         key={vacancy._id}
                         onClick={() => handleRowClick(vacancy)}
                         style={{
-                            backgroundColor: selectedVacancy?._id === vacancy._id ? '#f0f8ff' : '',
+                            backgroundColor: selectedVacancy?._id === vacancy._id ? 'rgba(74,144,226,0.66)' : '',
                             cursor: 'pointer',
                         }}
                     >
