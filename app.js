@@ -32,12 +32,12 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/jobOpenings', jobOpeningsRouter);
 
-// for the React-app
-app.use(express.static(path.join(__dirname, 'build')));
+// Если вы используете React
+app.use(express.static(path.join(__dirname, 'client/build')));
 
-// for other routes
+// Обработка всех запросов, которые не относятся к API
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
 // catch 404 and forward to error handler
