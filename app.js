@@ -33,9 +33,9 @@ app.use('/users', usersRouter);
 app.use('/jobOpenings', jobOpeningsRouter);
 
 if (process.env.NODE_ENV === 'production') {
-  const express = require('express');
   app.use(express.static(path.join(__dirname, 'client/build')));
 
+  // Все остальные запросы направлять на index.html
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
