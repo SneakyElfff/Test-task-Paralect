@@ -178,39 +178,41 @@ const VacanciesTable = () => {
                 <div className="popup">
                     <div className="popup-content">
                         <p>{errorPopup.message}</p>
-                        <button onClick={() => setErrorPopup({ visible: false, message: '' })}>OK</button>
+                        <button onClick={() => setErrorPopup({visible: false, message: ''})}>OK</button>
                     </div>
                 </div>
             )}
-            <table>
-                <thead>
-                <tr>
-                    <th>Company</th>
-                    <th>Position</th>
-                    <th>Salary range</th>
-                    <th>Notes</th>
-                    <th>Application status</th>
-                </tr>
-                </thead>
-                <tbody>
-                {vacancies.map((vacancy) => (
-                    <tr
-                        key={vacancy._id}
-                        onClick={() => handleRowClick(vacancy)}
-                        style={{
-                            backgroundColor: selectedVacancy?._id === vacancy._id ? 'rgba(74,144,226,0.66)' : '',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        <td>{vacancy.company}</td>
-                        <td>{vacancy.position}</td>
-                        <td>{vacancy.salary_range}</td>
-                        <td>{vacancy.notes}</td>
-                        <td>{vacancy.application_status}</td>
+            <div className="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Position</th>
+                        <th>Salary range</th>
+                        <th>Notes</th>
+                        <th>Application status</th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {vacancies.map((vacancy) => (
+                        <tr
+                            key={vacancy._id}
+                            onClick={() => handleRowClick(vacancy)}
+                            style={{
+                                backgroundColor: selectedVacancy?._id === vacancy._id ? 'rgba(74,144,226,0.66)' : '',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <td>{vacancy.company}</td>
+                            <td>{vacancy.position}</td>
+                            <td>{vacancy.salary_range}</td>
+                            <td>{vacancy.notes}</td>
+                            <td>{vacancy.application_status}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

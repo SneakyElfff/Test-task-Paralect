@@ -44,9 +44,19 @@
 }
 
 /* Table styles */
-table {
-  width: 95%;
+.table-container {
+  overflow-x: auto;
+  overflow-y: auto;
   margin: 30px auto;
+  width: 95%;
+  max-height: 650px;
+  border: none;
+  border-radius: var(--border-radius);
+}
+
+table {
+  width: 100%;
+  min-width: 400px;
   border-collapse: collapse;
   font-size: 18px;
   text-align: left;
@@ -146,7 +156,7 @@ tbody tr:hover {
 .modal-content {
   background-color: white;
   padding: 20px;
-  position: relative; /* Устанавливаем контекст для абсолютного позиционирования */
+  position: relative;
   border-radius: var(--border-radius);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 400px;
