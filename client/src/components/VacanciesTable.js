@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+const apiBaseUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
 
 const VacanciesTable = () => {
     const [vacancies, setVacancies] = useState([]);
@@ -19,7 +20,7 @@ const VacanciesTable = () => {
     useEffect(() => {
         const fetchVacancies = async () => {
             try {
-                const response = await axios.get('/jobOpenings');
+                const response = await axios.get(`${apiBaseUrl}/jobOpenings`);
                 setVacancies(response.data);
             } catch (error) {
                 console.error('Failed to fetch vacancies:', error);
@@ -60,7 +61,7 @@ const VacanciesTable = () => {
         if (selectedVacancy) {
             if (window.confirm('Are you sure you want to delete this vacancy?')) {
                 try {
-                    await axios.delete(`/jobOpenings/${selectedVacancy._id}`);
+                    await axios.delete(`${apiBaseUrl}/jobOpenings/${selectedVacancy._id}`);
                     setVacancies((prev) => prev.filter((vacancy) => vacancy._id !== selectedVacancy._id));
                     setSelectedVacancy(null);
                 } catch (error) {
@@ -82,14 +83,14 @@ const VacanciesTable = () => {
         e.preventDefault();
         try {
             if (isEditing) {
-                await axios.put(`/jobOpenings/${selectedVacancy._id}`, selectedVacancy);
+                await axios.put(`${apiBaseUrl}/jobOpenings/${selectedVacancy._id}`, selectedVacancy);
                 setVacancies((prev) =>
                     prev.map((vacancy) =>
                         vacancy._id === selectedVacancy._id ? selectedVacancy : vacancy
                     )
                 );
             } else {
-                const response = await axios.post('/jobOpenings', selectedVacancy);
+                const response = await axios.post(`${apiBaseUrl}/jobOpenings`, selectedVacancy);
                 setVacancies([...vacancies, response.data]);
             }
             setShowForm(false);
