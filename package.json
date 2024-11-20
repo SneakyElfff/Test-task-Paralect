@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "install-client": "cd client && npm install",
-    "install-server": "npm install",
-    "install": "npm run install-client && npm run install-server",
     "start": "node ./bin/www",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run start\" \"npm run client\""
