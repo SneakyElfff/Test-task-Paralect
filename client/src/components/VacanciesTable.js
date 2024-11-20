@@ -19,7 +19,7 @@ const VacanciesTable = () => {
     useEffect(() => {
         const fetchVacancies = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/jobOpenings');
+                const response = await axios.get('/jobOpenings');
                 setVacancies(response.data);
             } catch (error) {
                 console.error('Failed to fetch vacancies:', error);
@@ -60,7 +60,7 @@ const VacanciesTable = () => {
         if (selectedVacancy) {
             if (window.confirm('Are you sure you want to delete this vacancy?')) {
                 try {
-                    await axios.delete(`http://localhost:3000/jobOpenings/${selectedVacancy._id}`);
+                    await axios.delete(`/jobOpenings/${selectedVacancy._id}`);
                     setVacancies((prev) => prev.filter((vacancy) => vacancy._id !== selectedVacancy._id));
                     setSelectedVacancy(null);
                 } catch (error) {
@@ -82,14 +82,14 @@ const VacanciesTable = () => {
         e.preventDefault();
         try {
             if (isEditing) {
-                await axios.put(`http://localhost:3000/jobOpenings/${selectedVacancy._id}`, selectedVacancy);
+                await axios.put(`/jobOpenings/${selectedVacancy._id}`, selectedVacancy);
                 setVacancies((prev) =>
                     prev.map((vacancy) =>
                         vacancy._id === selectedVacancy._id ? selectedVacancy : vacancy
                     )
                 );
             } else {
-                const response = await axios.post('http://localhost:3000/jobOpenings', selectedVacancy);
+                const response = await axios.post('/jobOpenings', selectedVacancy);
                 setVacancies([...vacancies, response.data]);
             }
             setShowForm(false);
